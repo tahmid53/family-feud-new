@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Mobile optimization styles for Family Feud app */
+
+/* Base viewport settings */
+@media (max-width: 768px) {
+  html, body {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  
+  /* Increase base font size for better readability on mobile */
+  html {
+    font-size: 18px;
+  }
+  
+  /* Ensure buttons have sufficient touch target size */
+  button, 
+  a.button,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"] {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.75rem 1rem;
+  }
+  
+  /* Increase spacing between interactive elements */
+  .button-group > * {
+    margin: 0.5rem 0;
+  }
+  
+  /* Optimize form inputs for touch */
+  input, select, textarea {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+    padding: 0.75rem;
+  }
+  
+  /* Ensure sufficient spacing in lists and grids */
+  .grid {
+    gap: 1rem;
+  }
+  
+  /* Optimize buzzer for mobile */
+  .buzzer-button {
+    width: 80vw;
+    height: 80vw;
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 50%;
+    margin: 2rem auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+  
+  /* Optimize game board for mobile */
+  .game-board-answer {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Optimize team selection for mobile */
+  .team-selection-card {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Optimize Fast Money for mobile */
+  .fast-money-input {
+    font-size: 1.25rem;
+    padding: 0.75rem;
+  }
+  
+  /* Optimize navigation for mobile */
+  .mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-around;
+    background-color: #1e3a8a;
+    padding: 0.5rem;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+  }
+  
+  .mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem;
+    color: white;
+    text-decoration: none;
+    font-size: 0.75rem;
+  }
+  
+  .mobile-nav-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  /* Add extra padding to main content to account for bottom nav */
+  .has-mobile-nav {
+    padding-bottom: 4rem;
+  }
+  
+  /* Optimize modals for mobile */
+  .mobile-modal {
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+}
+
+/* Specific optimizations for very small screens */
+@media (max-width: 375px) {
+  html {
+    font-size: 16px;
+  }
+  
+  .xs-stack {
+    flex-direction: column !important;
+  }
+  
+  .xs-full-width {
+    width: 100% !important;
+  }
+}
+
+/* Landscape orientation optimizations */
+@media (max-height: 500px) and (orientation: landscape) {
+  .buzzer-button {
+    width: 40vw;
+    height: 40vw;
+    margin: 1rem auto;
+  }
+  
+  .landscape-flex {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .landscape-sidebar {
+    width: 30%;
+  }
+  
+  .landscape-main {
+    width: 70%;
+  }
+}
+
+/* Dark mode support for OLED screens to save battery */
+@media (prefers-color-scheme: dark) {
+  .oled-black {
+    background-color: #000;
+  }
+}
+
+/* High contrast mode for accessibility */
+@media (prefers-contrast: high) {
+  .high-contrast-text {
+    color: white;
+    text-shadow: 0 0 2px black;
+  }
+}

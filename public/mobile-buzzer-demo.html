@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>Family Feud - Mobile Optimized</title>
+  <style>
+    /* Base styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #1e40af; /* blue-900 */
+      color: white;
+      touch-action: manipulation;
+    }
+
+    /* Container */
+    .container {
+      max-width: 100%;
+      padding: 1rem;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 1rem 0;
+      background-color: #1e3a8a; /* blue-950 */
+    }
+
+    .title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #facc15; /* yellow-400 */
+      margin: 0;
+    }
+
+    /* Buzzer */
+    .buzzer-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 70vh;
+      padding: 1rem;
+    }
+
+    .buzzer-button {
+      width: 80vw;
+      height: 80vw;
+      max-width: 300px;
+      max-height: 300px;
+      border-radius: 50%;
+      background-color: #dc2626; /* red-600 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: white;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      border: none;
+      outline: none;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.1s, background-color 0.2s;
+    }
+
+    .buzzer-button:active {
+      transform: scale(0.95);
+      background-color: #b91c1c; /* red-700 */
+    }
+
+    .buzzer-disabled {
+      background-color: #6b7280; /* gray-500 */
+      transform: scale(0.95);
+    }
+
+    .player-info {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .player-name {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .game-code {
+      font-size: 1.25rem;
+      color: #facc15; /* yellow-400 */
+    }
+
+    .latency {
+      font-size: 0.875rem;
+      color: #9ca3af; /* gray-400 */
+      margin-top: 0.5rem;
+    }
+
+    .feedback {
+      margin-top: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #facc15; /* yellow-400 */
+      height: 2rem;
+    }
+
+    /* Navigation */
+    .nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-around;
+      background-color: #1e3a8a; /* blue-950 */
+      padding: 0.75rem 0;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+    }
+
+    .nav-link.active {
+      background-color: #2563eb; /* blue-600 */
+    }
+
+    /* Landscape mode */
+    @media (orientation: landscape) and (max-height: 500px) {
+      .buzzer-container {
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 0.5rem;
+      }
+
+      .buzzer-button {
+        width: 40vw;
+        height: 40vw;
+        max-width: 200px;
+        max-height: 200px;
+        font-size: 2rem;
+      }
+
+      .player-info {
+        margin-top: 0;
+        margin-left: 1rem;
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1 class="title">FAMILY FEUD</h1>
+  </div>
+
+  <div class="container">
+    <div class="buzzer-container">
+      <button id="buzzer" class="buzzer-button">BUZZ!</button>
+      
+      <div class="player-info">
+        <div class="player-name">Player: <span id="playerName">John</span></div>
+        <div class="game-code">Game: <span id="gameCode">ABC123</span></div>
+        <div class="latency">Latency: <span id="latency">45ms</span></div>
+      </div>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <div class="nav">
+    <a href="#" class="nav-link active">Buzzer</a>
+    <a href="#" class="nav-link">Teams</a>
+    <a href="#" class="nav-link">Game</a>
+  </div>
+
+  <script>
+    // Demo functionality for the buzzer
+    const buzzer = document.getElementById('buzzer');
+    const feedback = document.getElementById('feedback');
+    let lastBuzzTime = 0;
+    let cooldown = false;
+
+    buzzer.addEventListener('touchstart', handleBuzz);
+    buzzer.addEventListener('click', handleBuzz);
+
+    function handleBuzz(e) {
+      e.preventDefault(); // Prevent default behavior
+
+      if (cooldown) return;
+      
+      // Prevent spam clicking with 1-second cooldown
+      const now = Date.now();
+      if (now - lastBuzzTime < 1000) return;
+      
+      lastBuzzTime = now;
+      cooldown = true;
+      
+      // Visual feedback
+      buzzer.classList.add('buzzer-disabled');
+      buzzer.textContent = 'WAIT';
+      feedback.textContent = 'Buzzing...';
+      
+      // In a real app, this would send the buzz to the server
+      // socket.emit('buzzer_press', { timestamp: now });
+      
+      // Simulate server response
+      setTimeout(() => {
+        feedback.textContent = 'Buzz registered!';
+        
+        // Reset cooldown after 1 second
+        setTimeout(() => {
+          cooldown = false;
+          buzzer.classList.remove('buzzer-disabled');
+          buzzer.textContent = 'BUZZ!';
+          
+          // Clear feedback after 2 seconds
+          setTimeout(() => {
+            feedback.textContent = '';
+          }, 2000);
+        }, 1000);
+      }, 500);
+    }
+
+    // Prevent double-tap zoom on iOS
+    document.addEventListener('touchend', function(event) {
+      event.preventDefault();
+    }, { passive: false });
+  </script>
+</body>
+</html>
