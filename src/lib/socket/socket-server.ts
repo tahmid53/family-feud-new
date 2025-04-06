@@ -1,7 +1,7 @@
 // Server-side socket.io implementation for Family Feud
 import { Server } from 'socket.io';
 import http from 'http';
-import { NextApiRequest } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 import { gameManager } from '../../lib/game/game-manager';
 
 // Game rooms map to track active games
@@ -349,36 +349,41 @@ export function initSocketServer(server: http.Server) {
 }
 
 // API route handler for creating a new game
-export function handleCreateGame(req: NextApiRequest, res: any) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+export async function handleCreateGame(req: NextRequest) {
+  try {
+    const gameCode = generateGameCode();
+    
+    // Return the game code
+    return NextResponse.json({ 
+      success: true, 
+      gameCode 
+    });
+  } catch (error) {
+    console.error('Error creating game:', error);
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Failed to create game' 
+    }, { status: 500 });
   }
-  
-  const { hostName } = req.body;
-  
-  if (!hostName) {
-    return res.status(400).json({ error: 'Host name is required' });
-  }
-  
-  // Generate a unique game code
-  const gameCode = generateGameCode();
-  
-  return res.status(200).json({ gameCode });
 }
 
 // API route handler for checking if a game exists
-export function handleCheckGame(req: NextApiRequest, res: any) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+export async function handleCheckGame(req: NextRequest) {
+  const url = new URL(req.url);
+  const code = url.searchParams.get('code');
+  
+  if (!code) {
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Game code required' 
+    }, { status: 400 });
   }
   
-  const { gameCode } = req.query;
+  // Check if game exists
+  const exists = gameRooms.has(code);
   
-  if (!gameCode) {
-    return res.status(400).json({ error: 'Game code is required' });
-  }
-  
-  const exists = gameRooms.has(gameCode);
-  
-  return res.status(200).json({ exists });
+  return NextResponse.json({ 
+    success: true, 
+    exists 
+  });
 }

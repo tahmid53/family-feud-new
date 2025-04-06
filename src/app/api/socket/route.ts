@@ -1,29 +1,17 @@
 // API route for Socket.IO server
 import { Server as SocketIOServer } from 'socket.io';
-import { NextApiRequest } from 'next';
-import { NextApiResponse } from 'next';
+import { NextRequest } from 'next/server';
 
-// Import socket server implementation
-import { initSocketServer } from '../../../lib/socket/socket-server';
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
-// Store the socket server instance
-let socketServer: SocketIOServer;
+export async function GET(req: NextRequest) {
+  return new Response('WebSocket API route');
+}
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!res.socket.server.io) {
-    console.log('Initializing Socket.IO server...');
-    
-    // Create new Socket.IO server
-    socketServer = new SocketIOServer(res.socket.server);
-    
-    // Initialize socket server with our implementation
-    initSocketServer(socketServer);
-    
-    // Store the Socket.IO server instance
-    res.socket.server.io = socketServer;
-  } else {
-    console.log('Socket.IO server already running');
-  }
-  
-  res.end();
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+  return new Response(JSON.stringify({ received: true }), {
+    headers: { 'Content-Type': 'application/json' }
+  });
 }
